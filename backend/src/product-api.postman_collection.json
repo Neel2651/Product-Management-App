@@ -1,0 +1,72 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-5678-1234-9876-abcdef123456",
+    "name": "Product API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Products (Paginated + Search)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:4000/api/products?page=1&limit=10&search=laptop&status=active&tag=electronics&sortBy=price&sortDir=asc",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "products"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "10" },
+            { "key": "search", "value": "laptop" },
+            { "key": "status", "value": "active" },
+            { "key": "tag", "value": "electronics" },
+            { "key": "sortBy", "value": "price" },
+            { "key": "sortDir", "value": "asc" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Standing Desk\",\n  \"price\": 399,\n  \"status\": \"active\",\n  \"tags\": [\"furniture\", \"office\"]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/products",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Name\",\n  \"price\": 200,\n  \"status\": \"archived\",\n  \"tags\": [\"updated\"]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/products/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "4000",
+          "path": ["api", "products", "1"]
+        }
+      }
+    }
+  ]
+}
