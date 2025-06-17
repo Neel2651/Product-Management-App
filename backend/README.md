@@ -13,13 +13,13 @@ TypeScript
 📁 **Project Structure**
 
 src/
-├── constants/              # Reusable constants like status codes
-├── controllers/            # Route handlers
-├── data/                   # Mock database
-├── middleware/             # Express middleware functions
-├── routes/                 # API route definitions
-├── types/                  # TypeScript type definitions
-└── index.ts                # Entry point
+├── constants/       # Reusable constants like status codes
+├── controllers/     # Route handlers
+├── data/            # Mock database
+├── middleware/      # Express middleware functions
+├── routes/          # API route definitions
+├── types/           # TypeScript type definitions
+└── index.ts         # Entry point
 
 🚀 **Getting Started**
 
