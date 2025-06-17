@@ -1,8 +1,8 @@
-Product API Backend
+**Product API Backend**
 
 This is a Node.js + TypeScript backend project for managing product-related APIs. It follows a modular structure with routes, controllers, middleware, and type-safe models.
 
-✨ Tech Stack
+✨ **Tech Stack**
 
 Node.js
 
@@ -10,29 +10,29 @@ Express.js
 
 TypeScript
 
-📁 Project Structure
+📁 **Project Structure**
 
 src/
-├── constants/              # Reusable constants like status codes
-├── controllers/            # Route handlers
-├── data/                   # Mock database
-├── middleware/             # Express middleware functions
-├── routes/                 # API route definitions
-├── types/                  # TypeScript type definitions
-└── index.ts                # Entry point
+├── constants/       # Reusable constants like status codes
+├── controllers/     # Route handlers
+├── data/            # Mock database
+├── middleware/      # Express middleware functions
+├── routes/          # API route definitions
+├── types/           # TypeScript type definitions
+└── index.ts         # Entry point
 
-🚀 Getting Started
+🚀 **Getting Started**
 
-Prerequisites
+**Prerequisites**
 
 Node.js (v16+ recommended)
 
 npm or yarn
 
-Installation
+**Installation**
 
-git clone <repo-url>
-cd <project-directory>
+git clone https://github.com/Neel2651/Product-Management-App.git
+cd Product-Management-App/backend
 npm install
 
 Setup for Local Development
@@ -45,7 +45,7 @@ Add environment variables to the .env file:
 
 PORT=3000
 
-Start the development server:
+**Start the development server:**
 
 npm run dev
 
@@ -55,7 +55,7 @@ If you encounter issues, ensure TypeScript and ts-node-dev are installed globall
 
 npm install -g typescript ts-node-dev
 
-📢 API Endpoints
+📢 **API Endpoints**
 
 Use the provided Postman collection to test the APIs:
 
@@ -71,7 +71,7 @@ PUT /products/:id – Update a product
 
 DELETE /products/:id – Delete a product
 
-🔧 Scripts
+🔧 **Scripts**
 
 npm run dev – Run in development mode using ts-node-dev
 
