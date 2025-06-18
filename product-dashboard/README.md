@@ -1,10 +1,10 @@
-🛒 Product Management Dashboard (Frontend)
+🛒 **Product Management Dashboard (Frontend)**
 
 A modern product management interface built using Next.js 14 (App Router), Material UI, TanStack Query, and TypeScript.
 
 This dashboard enables you to view, create, update, and delete products with rich UI components and validation.
 
-⚙️ Tech Stack
+⚙️ **Tech Stack**
 
 Next.js 14 with App Router
 
@@ -18,7 +18,7 @@ Axios with interceptors
 
 Custom Hooks (e.g. debounced search)
 
-📁 Folder Structure
+📁 **Folder Structure**
 
 .
 ├── app/
@@ -37,18 +37,18 @@ Custom Hooks (e.g. debounced search)
 ├── next.config.ts
 ├── README.md
 
-🚀 Getting Started
+🚀 **Getting Started**
 
-1. Clone the Repository
+**1. Clone the Repository**
 
-git clone https://github.com/your-username/product-dashboard.git
-cd product-dashboard
+git clone https://github.com/your-username/Product-Management-App.git
+cd Product-Management-App/product-dashboard
 
-2. Install Dependencies
+**2. Install Dependencies**
 
 npm install
 
-3. Set Up Environment Variables
+**3. Set Up Environment Variables**
 
 Create a .env.local file in the root and define:
 
@@ -56,39 +56,25 @@ NEXT_PUBLIC_API_URL=
 
 Update the base URL of your backend.
 
-4. Run the Development Server
+**4. Run the Development Server**
 
 npm run dev
 
 Visit http://localhost:3000 to see it in action.
 
-🧪 Available Scripts
+🧪 **Available Scripts**
 
-Command
+npm run dev -> Start the development server
 
-Description
+npm run build -> Build the app for production
 
-npm run dev
+npm run start -> Start production server (after build)
 
-Start the development server
+npm run lint -> Run ESLint for code quality
 
-npm run build
+npm run typecheck -> Run TypeScript static checks
 
-Build the app for production
-
-npm run start
-
-Start production server (after build)
-
-npm run lint
-
-Run ESLint for code quality
-
-npm run typecheck
-
-Run TypeScript static checks
-
-✅ Features
+✅ **Features**
 
 CRUD operations for products
 
@@ -111,11 +97,3 @@ MUI theme support via app/theme.ts
 Axios Instance
 
 Defined in lib/axios.ts, all API calls use a pre-configured base URL and interceptors.
-
-📄 License
-
-MIT License
-
-👨‍💻 Author
-
-Built with ❤️ by Neel Shah
