@@ -1,7 +1,7 @@
 "use client";
 
 import { PRODUCT_STATUS_COLORS } from "@/constants/status";
-import { getFormattedNumberValue, titleCase } from "@/lib/utils";
+import { getFormattedNumberValue, titleCase } from "../../lib/utils";
 import { Product } from "@/types/product.types";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";

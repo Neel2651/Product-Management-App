@@ -1,6 +1,16 @@
 import { ProductStatus } from "@/constants/status";
 
 // ------------------
+// Sorting Keys
+// ------------------
+export type SortBy = "name" | "price" | "status";
+
+// ------------------
+// Sorting Direction
+// ------------------
+export type SortDir = "asc" | "desc";
+
+// ------------------
 // Product Type
 // ------------------
 
@@ -22,8 +32,8 @@ export type ProductQueryParams = {
   limit: number;
   search?: string;
   status?: ProductStatus;
-  sortBy?: "name" | "price" | "status";
-  sortDir?: "asc" | "desc";
+  sortBy?: SortBy;
+  sortDir?: SortDir;
 };
 
 // ------------------
@@ -45,4 +55,14 @@ export type UpdateProductInput = {
   price: number;
   status: ProductStatus;
   tags: string[];
+};
+
+// ------------------
+// Filter Schemas
+// ------------------
+export type Filters = {
+  search: string;
+  status: ProductStatus | undefined;
+  sortBy: SortBy;
+  sortDir: SortDir;
 };

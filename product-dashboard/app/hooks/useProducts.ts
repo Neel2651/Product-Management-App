@@ -1,10 +1,10 @@
-import api from "@/lib/axios";
 import {
   PaginatedResponse,
   Product,
   ProductQueryParams,
 } from "@/types/product.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "../../lib/axios";
 
 const API_BASE = "/products";
 

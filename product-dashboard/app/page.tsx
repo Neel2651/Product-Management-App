@@ -23,20 +23,24 @@ import { ProductDialog } from "@/components/ProductDialog";
 import { ProductStatus } from "@/constants/status";
 import useDebounce from "@/hooks/useDebounce";
 import { useProduct } from "@/hooks/useProducts";
-import { Product } from "@/types/product.types";
+import { Filters, Product } from "@/types/product.types";
 import { Add } from "@mui/icons-material";
+import ProductFilters from "./components/ProductFilters";
 
 export default function ProductsPage() {
   const [open, setOpen] = useState(false); // Dialog open state for adding/editing products
   const [deleteOpen, setDeleteOpen] = useState(false); // Dialog open state for confirming deletion
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>(); // Currently selected product for editing or deletion
   const [page, setPage] = useState(1); // Current page for pagination
-  const [search, setSearch] = useState(""); // Search term for filtering products
-  const [status, setStatus] = useState<ProductStatus | "">(""); // Filter by product status, can be empty for all statuses
-  const [sortBy, setSortBy] = useState<"price" | "name" | "status">("name"); // Sort by field
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc"); // Sort direction
 
-  const debouncedSearch = useDebounce(search, 500); // Debounced search term to avoid excessive API calls
+  // Filters and sorting
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    status: undefined,
+    sortBy: "name",
+    sortDir: "asc",
+  });
+  const debouncedSearch = useDebounce(filters.search, 500); // Debounced search term to avoid excessive API calls
 
   // Fetch products using custom hook with current filters and pagination
   const { data, isLoading, createProduct, editProduct, deleteProduct } =
@@ -44,9 +48,9 @@ export default function ProductsPage() {
       page,
       limit: 20,
       search: debouncedSearch,
-      status: status || undefined,
-      sortBy,
-      sortDir,
+      status: filters.status || undefined,
+      sortBy: filters.sortBy,
+      sortDir: filters.sortDir,
     });
 
   // Handle product selection for editing or deletion
@@ -125,57 +129,12 @@ export default function ProductsPage() {
         </Typography>
 
         {/* Filters */}
-        <Box display="flex" gap={2} flexWrap="wrap" alignItems="center" mb={2}>
-          {/* Search Filter */}
-          <TextField
-            label="Search products"
-            variant="outlined"
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            sx={{ minWidth: 300 }}
-          />
-          {/* Status Filter */}
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={status}
-              label="Status"
-              onChange={(e) => setStatus(e.target.value as ProductStatus | "")}
-            >
-              <MenuItem value="">All Status</MenuItem>
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="archived">Archived</MenuItem>
-            </Select>
-          </FormControl>
-          {/* Sort By Property */}
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Sort By</InputLabel>
-            <Select
-              value={sortBy}
-              label="Sort By"
-              onChange={(e) =>
-                setSortBy(e.target.value as "price" | "name" | "status")
-              }
-            >
-              <MenuItem value="name">Name</MenuItem>
-              <MenuItem value="price">Price</MenuItem>
-              <MenuItem value="status">Status</MenuItem>
-            </Select>
-          </FormControl>
-          {/* Sort By Direction */}
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Direction</InputLabel>
-            <Select
-              value={sortDir}
-              label="Direction"
-              onChange={(e) => setSortDir(e.target.value as "asc" | "desc")}
-            >
-              <MenuItem value="asc">Low To High</MenuItem>
-              <MenuItem value="desc">High To Low</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+        <ProductFilters
+          filters={filters}
+          setFilters={(update) =>
+            setFilters((prev) => ({ ...prev, ...update }))
+          }
+        />
 
         {/* Product List */}
         {isLoading ? (

@@ -1,5 +1,5 @@
-import { ProductStatus } from "@/constants/status"; // Enum for product status values
-import { titleCase } from "@/lib/utils"; // Utility to convert strings to title case
+import { ProductStatus } from "@/constants/status"; // Enum for product statuses
+import { titleCase } from "../../lib/utils"; // Utility to convert string to Title Case
 import { Product } from "@/types/product.types";
 import {
   Box,
@@ -15,13 +15,22 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
+// Props definition for the ProductDialog
 interface ProductDialogProps {
-  open: boolean; // Dialog open state
-  onClose: () => void; // Handler to close the dialog
-  onSave: (item: Omit<Product, "id"> | Product) => Promise<Boolean>; // Handler for saving a new/edited product
-  productToEdit?: Product | null; // Optional product to edit
+  open: boolean;
+  onClose: () => void;
+  onSave: (item: Omit<Product, "id"> | Product) => Promise<boolean>;
+  productToEdit?: Product | null;
+}
+
+// Unified state for the product form
+interface FormState {
+  name: string;
+  status: ProductStatus;
+  price: string; // price as string for controlled input
+  tags: string[];
 }
 
 export function ProductDialog({
@@ -30,48 +39,65 @@ export function ProductDialog({
   onSave,
   productToEdit,
 }: ProductDialogProps) {
-  const [name, setName] = useState(""); // Product name
-  const [status, setStatus] = useState(ProductStatus.ACTIVE); // Product status
-  const [price, setPrice] = useState(""); // Product price as string for controlled input
-  const [tags, setTags] = useState<string[]>([]); // Product tags as an array of strings
-  const [newTag, setNewTag] = useState(""); // New tag to be added
+  // Centralized form state
+  const [form, setForm] = useState<FormState>({
+    name: "",
+    status: ProductStatus.ACTIVE,
+    price: "",
+    tags: [],
+  });
 
+  // New tag input
+  const [newTag, setNewTag] = useState("");
+
+  // Form validation error messages
   const [errors, setErrors] = useState({
     name: "",
     price: "",
     newTag: "",
-  }); // Error messages for form validation
+  });
 
+  // Reset or populate form when dialog opens or productToEdit changes
   useEffect(() => {
     if (productToEdit) {
-      // If editing an existing product, populate the fields with its data
-      setName(productToEdit.name);
-      setStatus(productToEdit.status);
-      setPrice(productToEdit.price.toString());
-      setTags(productToEdit.tags);
+      setForm({
+        name: productToEdit.name,
+        status: productToEdit.status,
+        price: productToEdit.price.toString(),
+        tags: productToEdit.tags,
+      });
     } else {
-      // Reset fields when dialog is opened for adding a new product
-      setName("");
-      setStatus(ProductStatus.ACTIVE);
-      setPrice("");
-      setTags([]);
+      setForm({
+        name: "",
+        status: ProductStatus.ACTIVE,
+        price: "",
+        tags: [],
+      });
     }
+    setNewTag("");
     setErrors({ name: "", price: "", newTag: "" });
   }, [productToEdit]);
 
+  // Generic handler to update form fields by key
+  const handleChange = <K extends keyof FormState>(
+    key: K,
+    value: FormState[K]
+  ) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Validate form fields before submission
   const validate = () => {
     const newErrors = { name: "", price: "", newTag: "" };
     let isValid = true;
 
-    // Validate name
-    if (!name.trim()) {
+    if (!form.name.trim()) {
       newErrors.name = "Name is required";
       isValid = false;
     }
 
-    // Validate price
-    const parsedPrice = parseFloat(price);
-    if (!price.trim() || isNaN(parsedPrice) || parsedPrice <= 0) {
+    const parsedPrice = parseFloat(form.price);
+    if (!form.price.trim() || isNaN(parsedPrice) || parsedPrice <= 0) {
       newErrors.price = "Price must be a positive number";
       isValid = false;
     }
@@ -80,35 +106,40 @@ export function ProductDialog({
     return isValid;
   };
 
+  // Submit handler
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
 
-    // Validate form inputs before saving
     if (!validate()) return;
 
-    // If editing, ensure the productToEdit has an id
     const result = await onSave({
       ...(productToEdit ? { id: productToEdit.id } : {}),
-      name: name.trim(),
-      status,
-      price: parseFloat(price),
-      tags,
+      name: form.name.trim(),
+      status: form.status,
+      price: parseFloat(form.price),
+      tags: form.tags,
     });
 
-    setName("");
-    setStatus(ProductStatus.ACTIVE);
-    setPrice("");
-    setTags([]);
-    setNewTag("");
-    setErrors({ name: "", price: "", newTag: "" });
+    // Reset only if save was successful
+    if (result) {
+      setForm({
+        name: "",
+        status: ProductStatus.ACTIVE,
+        price: "",
+        tags: [],
+      });
+      setNewTag("");
+      setErrors({ name: "", price: "", newTag: "" });
+    }
   };
 
-  // Handler to add a new tag
+  // Add new tag to the list
   const handleAddTag = () => {
-    if (!newTag.trim()) return;
+    const tag = newTag.trim().toLowerCase();
+    if (!tag) return;
 
-    // Check for duplicate tags
-    if (tags.includes(newTag.trim().toLowerCase())) {
+    // Prevent duplicates
+    if (form.tags.includes(tag)) {
       setErrors((prev) => ({
         ...prev,
         newTag: "Duplicate tag not allowed",
@@ -116,70 +147,72 @@ export function ProductDialog({
       return;
     }
 
-    setTags((prev) => [...prev, newTag.trim().toLowerCase()]);
+    handleChange("tags", [...form.tags, tag]);
     setNewTag("");
     setErrors((prev) => ({ ...prev, newTag: "" }));
   };
 
-  // Handler to remove a tag
+  // Remove tag from the list
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((t) => t !== tagToRemove));
+    handleChange(
+      "tags",
+      form.tags.filter((t) => t !== tagToRemove)
+    );
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      {/* Dialog Title */}
+      {/* Header */}
       <DialogTitle>
         {productToEdit ? "Edit Product" : "Add Product"}
       </DialogTitle>
+
+      {/* Body */}
       <DialogContent>
         <form id="product-form" onSubmit={handleSave}>
-          {/* Product Name */}
+          {/* Name Field */}
           <TextField
             label="Name"
             fullWidth
             margin="normal"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={form.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             error={!!errors.name}
             helperText={errors.name}
             required
           />
 
-          {/* Product Status */}
+          {/* Status Dropdown */}
           <FormControl fullWidth margin="normal">
             <InputLabel>Status</InputLabel>
             <Select
               label="Status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ProductStatus)}
+              value={form.status}
+              onChange={(e) =>
+                handleChange("status", e.target.value as ProductStatus)
+              }
             >
               <MenuItem value={ProductStatus.ACTIVE}>Active</MenuItem>
-              <MenuItem value={ProductStatus.ARCHIVED}>Archive</MenuItem>
+              <MenuItem value={ProductStatus.ARCHIVED}>Archived</MenuItem>
             </Select>
           </FormControl>
 
-          {/* Price Input */}
+          {/* Price Field */}
           <TextField
             label="Price"
             fullWidth
             margin="normal"
             type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={form.price}
+            onChange={(e) => handleChange("price", e.target.value)}
             error={!!errors.price}
             helperText={errors.price}
             required
           />
 
-          {/* Tag Input */}
-          <Box
-            mt={2}
-            display={"flex"}
-            alignItems={"start"}
-            flexDirection={"column"}
-          >
-            <Box display={"flex"} alignItems={"center"}>
+          {/* Tags Input Section */}
+          <Box mt={2} display="flex" flexDirection="column" alignItems="start">
+            <Box display="flex" alignItems="center">
               <TextField
                 label="Add Tag"
                 value={newTag}
@@ -192,22 +225,24 @@ export function ProductDialog({
               </Button>
             </Box>
 
+            {/* Display Tags */}
             <Box mt={1}>
-              {tags.map((tag) => (
+              {form.tags.map((tag) => (
                 <Chip
                   key={tag}
                   label={titleCase(tag)}
                   onDelete={() => handleRemoveTag(tag)}
                   color="primary"
                   variant="outlined"
-                  style={{ marginRight: 5, marginBottom: 5 }}
+                  sx={{ mr: 1, mb: 1 }}
                 />
               ))}
             </Box>
           </Box>
         </form>
       </DialogContent>
-      {/* Dialog Actions  */}
+
+      {/* Footer */}
       <DialogActions>
         <Button onClick={onClose} color="warning">
           Cancel
